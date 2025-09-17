@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="16dp"
+    tools:ignore="ExtraText"><![CDATA[
+
+
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+
+
+
+
+    ]]>
+
+    <ImageView
+        android:id="@+id/carImage"
+        android:layout_width="375dp"
+        android:layout_height="152dp"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_camera"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="-1dp"
+        tools:layout_editor_absoluteY="48dp" />
+
+    <TextView
+        android:id="@+id/carName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Toyota Camry"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/carImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/carPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="$25,000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#D32F2F"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/carName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/carDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Комфортный седан с отличной репутацией, идеально подходит для городских поездок и дальних путешествий."
+        android:textSize="16sp"
+        android:textColor="#333333"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/carPrice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/specsCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/carDescription"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/carHorsePower"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Лошадиные силы: 203 hp"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/carMileage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Пробег: 15,000 км"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/carDamage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Повреждения: Отсутствуют"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/carYear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Год выпуска: 2023"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/carBodyType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Тип кузова: Седан"
+                android:textSize="16sp"
+                android:textColor="#000000" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/button"
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:rotation="0"
+        android:text="Добавить описание"
+        android:textColor="#000000"
+        android:textColorLink="#FFFFFF"
+        android:textStyle="bold"
+        android:typeface="sans"
+        tools:layout_editor_absoluteX="2dp"
+        tools:layout_editor_absoluteY="548dp"
+        tools:ignore="MissingConstraints" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

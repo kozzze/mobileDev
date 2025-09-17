@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">lab1</string>
+    <string name="title_activity_car_detail">CarDetailActivity</string>
+</resources>
