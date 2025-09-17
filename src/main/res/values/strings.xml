@@ -1,4 +1,23 @@
 <resources>
-    <string name="app_name">lab1</string>
-    <string name="title_activity_car_detail">CarDetailActivity</string>
+    <string name="app_name">Car Catalog</string>
+    <string name="back">Назад</string>
+    <string name="add_description">Добавить описание</string>
+    <string name="item_details">Car Details</string>
+    <string name="clicked_item">Selected: %1$s</string>
+    <string name="return_to_main">Returning to MainActivity</string>
+    <string name="lifecycle_main_create">MainActivity: onCreate</string>
+    <string name="lifecycle_main_start">MainActivity: onStart</string>
+    <string name="lifecycle_main_resume">MainActivity: onResume</string>
+    <string name="lifecycle_main_pause">MainActivity: onPause</string>
+    <string name="lifecycle_main_stop">MainActivity: onStop</string>
+    <string name="lifecycle_main_destroy">MainActivity: onDestroy</string>
+    <string name="add_description_clicked">Description button clicked for %1$s</string>
+    <string name="lifecycle_main_restart">MainActivity: onRestart</string>
+    <string name="lifecycle_detail_create">CarDetailActivity: onCreate</string>
+    <string name="lifecycle_detail_start">CarDetailActivity: onStart</string>
+    <string name="lifecycle_detail_resume">CarDetailActivity: onResume</string>
+    <string name="lifecycle_detail_pause">CarDetailActivity: onPause</string>
+    <string name="lifecycle_detail_stop">CarDetailActivity: onStop</string>
+    <string name="lifecycle_detail_destroy">CarDetailActivity: onDestroy</string>
+    <string name="lifecycle_detail_restart">CarDetailActivity: onRestart</string>
 </resources>

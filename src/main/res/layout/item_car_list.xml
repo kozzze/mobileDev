@@ -10,19 +10,17 @@
     android:background="#FFFFFF"
     tools:ignore="ExtraText">
 
-    <!-- Картинка автомобиля -->
     <ImageView
         android:id="@+id/carImage"
         android:layout_width="80dp"
         android:layout_height="60dp"
         android:scaleType="centerCrop"
         android:src="@android:drawable/ic_menu_camera"
-        tools:ignore="MissingConstraints" /> <!-- Замени на своё изображение, например @drawable/car1 -->
+        tools:ignore="MissingConstraints" />
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Название автомобиля -->
     <TextView
         android:id="@+id/carName"
         android:layout_width="0dp"
@@ -37,7 +35,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Цена автомобиля -->
     <TextView
         android:id="@+id/carPrice"
         android:layout_width="100dp"
@@ -50,7 +47,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <!-- Разделительная линия -->
     <View
         android:id="@+id/divider"
         android:layout_width="0dp"
