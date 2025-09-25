@@ -14,7 +14,6 @@ class CarDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.car_detail)
         Log.d(TAG, "onCreate called")
-        Toast.makeText(this, R.string.lifecycle_detail_create, Toast.LENGTH_SHORT).show()
 
         val carName = intent.getStringExtra("carName") ?: "Unknown"
         val carPrice = intent.getStringExtra("carPrice") ?: "Unknown"
@@ -36,36 +35,30 @@ class CarDetailActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart called")
-        Toast.makeText(this, R.string.lifecycle_detail_start, Toast.LENGTH_SHORT).show()
     }
 
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume called")
-        Toast.makeText(this, R.string.lifecycle_detail_resume, Toast.LENGTH_SHORT).show()
     }
 
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause called")
-        Toast.makeText(this, R.string.lifecycle_detail_pause, Toast.LENGTH_SHORT).show()
     }
 
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop called")
-        Toast.makeText(this, R.string.lifecycle_detail_stop, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy called")
-        Toast.makeText(this, R.string.lifecycle_detail_destroy, Toast.LENGTH_SHORT).show()
     }
 
     override fun onRestart() {
         super.onRestart()
         Log.d(TAG, "onRestart called")
-        Toast.makeText(this, R.string.lifecycle_detail_restart, Toast.LENGTH_SHORT).show()
     }
 }
