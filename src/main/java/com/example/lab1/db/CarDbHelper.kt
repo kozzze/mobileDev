@@ -8,7 +8,7 @@ import com.example.lab1.db.UserContract as U
 import com.example.lab1.db.FavoriteContract as F
 
 private const val DB_NAME = "cars.db"
-private const val DB_VERSION = 2
+private const val DB_VERSION = 4   // поднимаем версию, чтобы база пересоздалась
 
 class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -18,7 +18,17 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // cars
+        // --- users ---
+        db.execSQL("""
+            CREATE TABLE ${U.TABLE} (
+                ${U.Col.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+                ${U.Col.NAME} TEXT NOT NULL UNIQUE,
+                ${U.Col.PASSWORD} TEXT NOT NULL,
+                ${U.Col.IS_ADMIN} INTEGER NOT NULL DEFAULT 0
+            );
+        """.trimIndent())
+
+        // --- cars ---
         db.execSQL("""
             CREATE TABLE ${C.TABLE} (
                 ${C.Col.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,16 +45,7 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
         db.execSQL("CREATE INDEX idx_car_brand ON ${C.TABLE}(${C.Col.BRAND});")
         db.execSQL("CREATE INDEX idx_car_year  ON ${C.TABLE}(${C.Col.YEAR});")
 
-        // users
-        db.execSQL("""
-            CREATE TABLE ${U.TABLE} (
-                ${U.Col.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
-                ${U.Col.NAME} TEXT NOT NULL UNIQUE,
-                ${U.Col.IS_ADMIN} INTEGER NOT NULL DEFAULT 0
-            );
-        """.trimIndent())
-
-        // favorites
+        // --- favorites ---
         db.execSQL("""
             CREATE TABLE ${F.TABLE} (
                 ${F.Col.USER_ID} INTEGER NOT NULL,
@@ -60,8 +61,8 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS ${F.TABLE}")
-        db.execSQL("DROP TABLE IF EXISTS ${U.TABLE}")
         db.execSQL("DROP TABLE IF EXISTS ${C.TABLE}")
+        db.execSQL("DROP TABLE IF EXISTS ${U.TABLE}")
         onCreate(db)
     }
 }

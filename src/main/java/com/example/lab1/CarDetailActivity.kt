@@ -12,6 +12,7 @@ import com.example.lab1.db.CarRepository
 import com.example.lab1.db.UserRepository
 import java.text.NumberFormat
 import java.util.Locale
+import android.view.View
 import java.util.concurrent.Executors
 
 class CarDetailActivity : AppCompatActivity() {
@@ -53,6 +54,12 @@ class CarDetailActivity : AppCompatActivity() {
         val editBtn   = findViewById<Button>(R.id.editDescButton)
         val favBtn    = findViewById<Button>(R.id.favButton)
         val addBtn    = findViewById<Button>(R.id.addDeskButton)
+
+        if (!Session.isAdmin) {
+            editBtn.visibility = View.GONE
+            addBtn.visibility = View.GONE
+        }
+
         val backToMain = findViewById<Button>(R.id.backToMainButton)
         backToMain.setOnClickListener {
             finish()
