@@ -20,4 +20,5 @@
     <string name="lifecycle_detail_stop">CarDetailActivity: onStop</string>
     <string name="lifecycle_detail_destroy">CarDetailActivity: onDestroy</string>
     <string name="lifecycle_detail_restart">CarDetailActivity: onRestart</string>
+    <string name="title_activity_main2">MainActivity2</string>
 </resources>

@@ -1,14 +1,12 @@
-package com.example.lab1
+package com.example.lab1.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "car")
 data class Car(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val id: Long = 0L,
     val brand: String,
     val model: String,
-    val price: String,
     val year: Int,
+    val body: String? = null,
+    val price: Double,
+    val description: String? = null,
     val imageResId: Int = android.R.drawable.ic_menu_camera
 )
