@@ -28,7 +28,6 @@ class CarDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.car_detail)
 
-        // Включаем «стрелку назад» в тулбаре
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Детали авто"
 
@@ -126,7 +125,6 @@ class CarDetailActivity : AppCompatActivity() {
 
     }
 
-    // обработка клика по «стрелке назад» в тулбаре
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {

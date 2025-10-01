@@ -11,7 +11,6 @@ import com.example.lab1.db.FavoriteContract as F
 class CarRepository(context: Context) {
     private val helper = CarDbHelper(context)
 
-    // Cars
     fun insert(car: Car): Long {
         val db = helper.writableDatabase
         val v = ContentValues().apply {
@@ -49,7 +48,6 @@ class CarRepository(context: Context) {
         return cur.use { if (it.moveToFirst()) it.readCar() else null }
     }
 
-    // Favorites
     fun addFavorite(userId: Long, carId: Long): Long {
         val db = helper.writableDatabase
         val v = ContentValues().apply {
@@ -90,7 +88,6 @@ class CarRepository(context: Context) {
         return cur.use { it.toCars() }
     }
 
-    // Cursor helpers
     private fun Cursor.toCars(): List<Car> {
         val list = ArrayList<Car>(count)
         while (moveToNext()) list.add(readCar())

@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
         carRepo = CarRepository(this)
         userRepo = UserRepository(this)
 
-        // проверка входа
         val name = AuthManager.getUserName(this)
         if (name == null) {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -55,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         val user = userRepo.getByName(Session.currentUserName!!)!!
         currentUserId = user.id
 
-        // UI
         userNameText = findViewById(R.id.userNameText)
         logoutButton = findViewById(R.id.logoutButton)
         favoritesButton = findViewById(R.id.favoritesButton)

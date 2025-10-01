@@ -8,7 +8,7 @@ import com.example.lab1.db.UserContract as U
 import com.example.lab1.db.FavoriteContract as F
 
 private const val DB_NAME = "cars.db"
-private const val DB_VERSION = 4   // поднимаем версию, чтобы база пересоздалась
+private const val DB_VERSION = 5
 
 class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -18,7 +18,7 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // --- users ---
+        // users (логин/пароль + флаг админа)
         db.execSQL("""
             CREATE TABLE ${U.TABLE} (
                 ${U.Col.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +28,6 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
             );
         """.trimIndent())
 
-        // --- cars ---
         db.execSQL("""
             CREATE TABLE ${C.TABLE} (
                 ${C.Col.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -45,7 +44,6 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
         db.execSQL("CREATE INDEX idx_car_brand ON ${C.TABLE}(${C.Col.BRAND});")
         db.execSQL("CREATE INDEX idx_car_year  ON ${C.TABLE}(${C.Col.YEAR});")
 
-        // --- favorites ---
         db.execSQL("""
             CREATE TABLE ${F.TABLE} (
                 ${F.Col.USER_ID} INTEGER NOT NULL,
@@ -64,5 +62,9 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
         db.execSQL("DROP TABLE IF EXISTS ${C.TABLE}")
         db.execSQL("DROP TABLE IF EXISTS ${U.TABLE}")
         onCreate(db)
+    }
+
+    override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        onUpgrade(db, oldVersion, newVersion)
     }
 }
