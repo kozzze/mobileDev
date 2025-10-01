@@ -1,7 +1,7 @@
 package com.example.lab1.db
 
 object CarContract {
-    const val TABLE = "car"
+    const val TABLE = "cars"
     object Col {
         const val ID = "_id"
         const val BRAND = "brand"
@@ -10,6 +10,6 @@ object CarContract {
         const val BODY = "body"
         const val PRICE = "price"
         const val DESCRIPTION = "description"
-        const val IMAGE_RES = "image_res"
+        const val IMAGE_URL = "image_url" // TEXT
     }
 }

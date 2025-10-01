@@ -2,11 +2,12 @@ package com.example.lab1
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
+import android.text.InputType
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         carRepo = CarRepository(this)
         userRepo = UserRepository(this)
 
+        // проверяем сессию
         val name = AuthManager.getUserName(this)
         if (name == null) {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -59,18 +61,15 @@ class MainActivity : AppCompatActivity() {
         favoritesButton = findViewById(R.id.favoritesButton)
         addCarButton = findViewById(R.id.addCarButton)
 
-        userNameText.text = "Пользователь: ${user.name}"
-
-        if (Session.isAdmin) {
-            addCarButton.visibility = android.view.View.VISIBLE
-        }
+        userNameText.text = if (Session.isAdmin) "Пользователь: ${user.name} (Админ)" else "Пользователь: ${user.name}"
+        if (Session.isAdmin) addCarButton.visibility = android.view.View.VISIBLE
 
         rv = findViewById(R.id.recyclerView)
         rv.layoutManager = LinearLayoutManager(this)
 
         loadAllCars()
 
-        // кнопка выйти
+        // Выйти
         logoutButton.setOnClickListener {
             AuthManager.clearUser(this)
             Session.currentUserName = null
@@ -80,7 +79,7 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        // кнопка избранное
+        // Избранное
         favoritesButton.setOnClickListener {
             if (showingFavorites) {
                 loadAllCars()
@@ -93,17 +92,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // кнопка добавить авто (для админа)
-        addCarButton.setOnClickListener {
-            showAddCarDialog()
-        }
+        // Добавить авто (только админ)
+        addCarButton.setOnClickListener { showAddCarDialog() }
     }
 
     private fun loadAllCars() {
         io.execute {
             val cars = carRepo.getAll()
             runOnUiThread {
-                adapter = CarAdapter(cars) { car: Car ->
+                adapter = CarAdapter(cars) { car ->
                     val i = Intent(this, CarDetailActivity::class.java)
                     i.putExtra("car_id", car.id)
                     startActivity(i)
@@ -117,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         io.execute {
             val favCars = carRepo.getFavorites(currentUserId)
             runOnUiThread {
-                adapter = CarAdapter(favCars) { car: Car ->
+                adapter = CarAdapter(favCars) { car ->
                     val i = Intent(this, CarDetailActivity::class.java)
                     i.putExtra("car_id", car.id)
                     startActivity(i)
@@ -131,9 +128,16 @@ class MainActivity : AppCompatActivity() {
     private fun showAddCarDialog() {
         val brandEt = EditText(this).apply { hint = "Марка" }
         val modelEt = EditText(this).apply { hint = "Модель" }
-        val yearEt  = EditText(this).apply { hint = "Год"; inputType = android.text.InputType.TYPE_CLASS_NUMBER }
+        val yearEt  = EditText(this).apply {
+            hint = "Год"
+            inputType = InputType.TYPE_CLASS_NUMBER
+        }
         val bodyEt  = EditText(this).apply { hint = "Кузов" }
-        val priceEt = EditText(this).apply { hint = "Цена"; inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL }
+        val priceEt = EditText(this).apply {
+            hint = "Цена"
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+        val imageUrlEt = EditText(this).apply { hint = "URL картинки (https://...)" }
 
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
@@ -143,6 +147,7 @@ class MainActivity : AppCompatActivity() {
             addView(yearEt)
             addView(bodyEt)
             addView(priceEt)
+            addView(imageUrlEt)
         }
 
         AlertDialog.Builder(this)
@@ -154,17 +159,27 @@ class MainActivity : AppCompatActivity() {
                 val year  = yearEt.text.toString().toIntOrNull()
                 val body  = bodyEt.text.toString().trim().ifBlank { null }
                 val price = priceEt.text.toString().toDoubleOrNull()
+                val img   = imageUrlEt.text.toString().trim().ifBlank { null }
 
                 if (brand.isEmpty() || model.isEmpty() || year == null || price == null) {
-                    Toast.makeText(this, "Заполните все поля", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Заполните бренд, модель, год и цену", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
                 io.execute {
-                    carRepo.insert(Car(brand = brand, model = model, year = year, body = body, price = price))
+                    carRepo.insert(
+                        Car(
+                            brand = brand,
+                            model = model,
+                            year = year,
+                            body = body,
+                            price = price,
+                            imageUrl = img
+                        )
+                    )
                     val cars = carRepo.getAll()
                     runOnUiThread {
-                        adapter = CarAdapter(cars) { car: Car ->
+                        adapter = CarAdapter(cars) { car ->
                             val i = Intent(this, CarDetailActivity::class.java)
                             i.putExtra("car_id", car.id)
                             startActivity(i)

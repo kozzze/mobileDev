@@ -6,20 +6,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.lab1.R
 import com.example.lab1.model.Car
-import java.text.NumberFormat
-import java.util.Locale
 
 class CarAdapter(
     private val cars: List<Car>,
-    private val onItemClick: (Car) -> Unit
+    private val onClick: (Car) -> Unit
 ) : RecyclerView.Adapter<CarAdapter.CarViewHolder>() {
 
-    class CarViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val carImage: ImageView = itemView.findViewById(R.id.carImage)
-        val carName: TextView = itemView.findViewById(R.id.carName)
-        val carPrice: TextView = itemView.findViewById(R.id.carPrice)
+    class CarViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val carImage: ImageView = view.findViewById(R.id.itemCarImage)
+        val carName: TextView = view.findViewById(R.id.itemCarName)
+        val carPrice: TextView = view.findViewById(R.id.itemCarPrice)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarViewHolder {
@@ -31,10 +30,22 @@ class CarAdapter(
     override fun onBindViewHolder(holder: CarViewHolder, position: Int) {
         val car = cars[position]
         holder.carName.text = "${car.brand} ${car.model}"
-        holder.carPrice.text = NumberFormat.getCurrencyInstance(Locale.US).format(car.price)
-        holder.carImage.setImageResource(car.imageResId)
-        holder.itemView.setOnClickListener { onItemClick(car) }
+        holder.carPrice.text = "${car.price} $"
+
+        val url = car.imageUrl
+        if (!url.isNullOrBlank()) {
+            Glide.with(holder.itemView)
+                .load(url)
+                .placeholder(android.R.drawable.ic_menu_camera)
+                .error(android.R.drawable.ic_menu_report_image)
+                .centerCrop()
+                .into(holder.carImage)
+        } else {
+            holder.carImage.setImageResource(android.R.drawable.ic_menu_camera)
+        }
+
+        holder.itemView.setOnClickListener { onClick(car) }
     }
 
-    override fun getItemCount(): Int = cars.size
+    override fun getItemCount() = cars.size
 }

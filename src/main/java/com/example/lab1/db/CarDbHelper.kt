@@ -8,7 +8,7 @@ import com.example.lab1.db.UserContract as U
 import com.example.lab1.db.FavoriteContract as F
 
 private const val DB_NAME = "cars.db"
-private const val DB_VERSION = 5
+private const val DB_VERSION = 8
 
 class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -18,7 +18,7 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
     }
 
     override fun onCreate(db: SQLiteDatabase) {
-        // users (логин/пароль + флаг админа)
+        // users
         db.execSQL("""
             CREATE TABLE ${U.TABLE} (
                 ${U.Col.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,6 +28,7 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
             );
         """.trimIndent())
 
+        // cars
         db.execSQL("""
             CREATE TABLE ${C.TABLE} (
                 ${C.Col.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,13 +38,15 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
                 ${C.Col.BODY} TEXT,
                 ${C.Col.PRICE} REAL NOT NULL,
                 ${C.Col.DESCRIPTION} TEXT,
-                ${C.Col.IMAGE_RES} INTEGER NOT NULL DEFAULT ${android.R.drawable.ic_menu_camera},
+                ${C.Col.IMAGE_URL} TEXT,
                 UNIQUE(${C.Col.BRAND}, ${C.Col.MODEL}, ${C.Col.YEAR}) ON CONFLICT IGNORE
             );
         """.trimIndent())
-        db.execSQL("CREATE INDEX idx_car_brand ON ${C.TABLE}(${C.Col.BRAND});")
-        db.execSQL("CREATE INDEX idx_car_year  ON ${C.TABLE}(${C.Col.YEAR});")
 
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_car_brand ON ${C.TABLE}(${C.Col.BRAND});")
+        db.execSQL("CREATE INDEX IF NOT EXISTS idx_car_year  ON ${C.TABLE}(${C.Col.YEAR});")
+
+        // favorites
         db.execSQL("""
             CREATE TABLE ${F.TABLE} (
                 ${F.Col.USER_ID} INTEGER NOT NULL,
@@ -53,9 +56,8 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
                 FOREIGN KEY (${F.Col.CAR_ID})  REFERENCES ${C.TABLE}(${C.Col.ID}) ON DELETE CASCADE
             );
         """.trimIndent())
-        db.execSQL("CREATE INDEX idx_fav_user ON ${F.TABLE}(${F.Col.USER_ID});")
-        db.execSQL("CREATE INDEX idx_fav_car  ON ${F.TABLE}(${F.Col.CAR_ID});")
-    }
+
+        }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS ${F.TABLE}")

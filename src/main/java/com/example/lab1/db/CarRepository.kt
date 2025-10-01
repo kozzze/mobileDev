@@ -2,11 +2,8 @@ package com.example.lab1.db
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
 import com.example.lab1.model.Car
 import com.example.lab1.db.CarContract as C
-import com.example.lab1.db.FavoriteContract as F
 
 class CarRepository(context: Context) {
     private val helper = CarDbHelper(context)
@@ -16,95 +13,94 @@ class CarRepository(context: Context) {
         val v = ContentValues().apply {
             put(C.Col.BRAND, car.brand)
             put(C.Col.MODEL, car.model)
-            put(C.Col.YEAR,  car.year)
-            put(C.Col.BODY,  car.body)
+            put(C.Col.YEAR, car.year)
+            put(C.Col.BODY, car.body)
             put(C.Col.PRICE, car.price)
             put(C.Col.DESCRIPTION, car.description)
-            put(C.Col.IMAGE_RES, car.imageResId)
+            put(C.Col.IMAGE_URL, car.imageUrl)
         }
-        return db.insertWithOnConflict(C.TABLE, null, v, SQLiteDatabase.CONFLICT_IGNORE)
-    }
-
-    fun updateDescription(id: Long, description: String): Int {
-        val db = helper.writableDatabase
-        val v = ContentValues().apply { put(C.Col.DESCRIPTION, description) }
-        return db.update(C.TABLE, v, "${C.Col.ID}=?", arrayOf(id.toString()))
+        return db.insert(C.TABLE, null, v)
     }
 
     fun getAll(): List<Car> {
         val db = helper.readableDatabase
-        val cur = db.query(
-            C.TABLE,
-            arrayOf(C.Col.ID, C.Col.BRAND, C.Col.MODEL, C.Col.YEAR, C.Col.BODY, C.Col.PRICE, C.Col.DESCRIPTION, C.Col.IMAGE_RES),
-            null, null, null, null,
-            "${C.Col.BRAND} ASC, ${C.Col.MODEL} ASC"
-        )
-        return cur.use { it.toCars() }
+        val c = db.query(C.TABLE, null, null, null, null, null, null)
+        val list = mutableListOf<Car>()
+        c.use {
+            while (c.moveToNext()) list.add(c.readCar())
+        }
+        return list
     }
 
     fun getById(id: Long): Car? {
         val db = helper.readableDatabase
-        val cur = db.query(C.TABLE, null, "${C.Col.ID}=?", arrayOf(id.toString()), null, null, null)
-        return cur.use { if (it.moveToFirst()) it.readCar() else null }
+        val c = db.query(C.TABLE, null, "${C.Col.ID}=?", arrayOf(id.toString()), null, null, null)
+        c.use { if (it.moveToFirst()) return it.readCar() }
+        return null
     }
 
-    fun addFavorite(userId: Long, carId: Long): Long {
+    fun updateDescription(id: Long, desc: String) {
         val db = helper.writableDatabase
-        val v = ContentValues().apply {
-            put(F.Col.USER_ID, userId)
-            put(F.Col.CAR_ID, carId)
-        }
-        return db.insertWithOnConflict(F.TABLE, null, v, SQLiteDatabase.CONFLICT_IGNORE)
+        val v = ContentValues().apply { put(C.Col.DESCRIPTION, desc) }
+        db.update(C.TABLE, v, "${C.Col.ID}=?", arrayOf(id.toString()))
     }
 
-    fun removeFavorite(userId: Long, carId: Long): Int {
-        val db = helper.writableDatabase
-        return db.delete(F.TABLE, "${F.Col.USER_ID}=? AND ${F.Col.CAR_ID}=?", arrayOf(userId.toString(), carId.toString()))
-    }
-
+    // ---------- Избранное ----------
     fun isFavorite(userId: Long, carId: Long): Boolean {
         val db = helper.readableDatabase
         val c = db.query(
-            F.TABLE,
-            arrayOf(F.Col.USER_ID),
-            "${F.Col.USER_ID}=? AND ${F.Col.CAR_ID}=?",
+            FavoriteContract.TABLE,
+            arrayOf(FavoriteContract.Col.USER_ID),
+            "${FavoriteContract.Col.USER_ID}=? AND ${FavoriteContract.Col.CAR_ID}=?",
             arrayOf(userId.toString(), carId.toString()),
-            null, null, null, "1"
+            null, null, null
         )
         c.use { return it.moveToFirst() }
+    }
+
+    fun addFavorite(userId: Long, carId: Long) {
+        val db = helper.writableDatabase
+        val v = ContentValues().apply {
+            put(FavoriteContract.Col.USER_ID, userId)
+            put(FavoriteContract.Col.CAR_ID,  carId)
+        }
+        db.insert(FavoriteContract.TABLE, null, v)
+    }
+
+    fun removeFavorite(userId: Long, carId: Long) {
+        val db = helper.writableDatabase
+        db.delete(
+            FavoriteContract.TABLE,
+            "${FavoriteContract.Col.USER_ID}=? AND ${FavoriteContract.Col.CAR_ID}=?",
+            arrayOf(userId.toString(), carId.toString())
+        )
     }
 
     fun getFavorites(userId: Long): List<Car> {
         val db = helper.readableDatabase
         val sql = """
-            SELECT c.${C.Col.ID}, c.${C.Col.BRAND}, c.${C.Col.MODEL}, c.${C.Col.YEAR},
-                   c.${C.Col.BODY}, c.${C.Col.PRICE}, c.${C.Col.DESCRIPTION}, c.${C.Col.IMAGE_RES}
-            FROM ${C.TABLE} c
-            INNER JOIN ${F.TABLE} f ON f.${F.Col.CAR_ID} = c.${C.Col.ID}
-            WHERE f.${F.Col.USER_ID} = ?
-            ORDER BY c.${C.Col.BRAND} ASC, c.${C.Col.MODEL} ASC
+            SELECT c.* FROM ${C.TABLE} c
+            INNER JOIN ${FavoriteContract.TABLE} f
+              ON f.${FavoriteContract.Col.CAR_ID} = c.${C.Col.ID}
+            WHERE f.${FavoriteContract.Col.USER_ID} = ?
+            ORDER BY c.${C.Col.BRAND}, c.${C.Col.MODEL}, c.${C.Col.YEAR}
         """.trimIndent()
-        val cur = db.rawQuery(sql, arrayOf(userId.toString()))
-        return cur.use { it.toCars() }
-    }
-
-    private fun Cursor.toCars(): List<Car> {
-        val list = ArrayList<Car>(count)
-        while (moveToNext()) list.add(readCar())
+        val c = db.rawQuery(sql, arrayOf(userId.toString()))
+        val list = mutableListOf<Car>()
+        c.use { while (it.moveToNext()) list.add(it.readCar()) }
         return list
     }
 
-    private fun Cursor.readCar(): Car {
-        fun idx(n: String) = getColumnIndexOrThrow(n)
+    private fun android.database.Cursor.readCar(): Car {
         return Car(
-            id = getLong(idx(C.Col.ID)),
-            brand = getString(idx(C.Col.BRAND)),
-            model = getString(idx(C.Col.MODEL)),
-            year  = getInt(idx(C.Col.YEAR)),
-            body  = getString(idx(C.Col.BODY)),
-            price = getDouble(idx(C.Col.PRICE)),
-            description = getString(idx(C.Col.DESCRIPTION)),
-            imageResId  = getInt(idx(C.Col.IMAGE_RES))
+            id = getLong(getColumnIndexOrThrow(C.Col.ID)),
+            brand = getString(getColumnIndexOrThrow(C.Col.BRAND)),
+            model = getString(getColumnIndexOrThrow(C.Col.MODEL)),
+            year = getInt(getColumnIndexOrThrow(C.Col.YEAR)),
+            body = getString(getColumnIndexOrThrow(C.Col.BODY)),
+            price = getDouble(getColumnIndexOrThrow(C.Col.PRICE)),
+            description = getString(getColumnIndexOrThrow(C.Col.DESCRIPTION)),
+            imageUrl = getString(getColumnIndexOrThrow(C.Col.IMAGE_URL))
         )
     }
 }

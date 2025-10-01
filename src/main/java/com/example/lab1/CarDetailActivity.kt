@@ -1,18 +1,14 @@
 package com.example.lab1
 
 import android.os.Bundle
-import android.view.MenuItem
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.lab1.db.CarRepository
 import com.example.lab1.db.UserRepository
 import java.text.NumberFormat
 import java.util.Locale
-import android.view.View
 import java.util.concurrent.Executors
 
 class CarDetailActivity : AppCompatActivity() {
@@ -22,117 +18,114 @@ class CarDetailActivity : AppCompatActivity() {
     private val io = Executors.newSingleThreadExecutor()
 
     private var carId: Long = -1
-    private var userId: Long = -1
+    private var currentUserId: Long = -1
+    private var isFavNow: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.car_detail)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Детали авто"
-
         carRepo = CarRepository(this)
         userRepo = UserRepository(this)
 
-        val currentName = AuthManager.getUserName(this)
-        if (currentName == null) {
-            Toast.makeText(this, "Авторизуйтесь заново", Toast.LENGTH_SHORT).show()
+        carId = intent.getLongExtra("car_id", -1)
+
+        val carImage = findViewById<ImageView>(R.id.carImage)
+        val nameText = findViewById<TextView>(R.id.carName)
+        val priceText = findViewById<TextView>(R.id.carPrice)
+        val descText = findViewById<EditText>(R.id.carDescription)
+        val yearText = findViewById<TextView>(R.id.carYear)
+        val bodyText = findViewById<TextView>(R.id.carBodyType)
+
+        val editBtn = findViewById<Button>(R.id.editDescButton)
+        val favBtn  = findViewById<Button>(R.id.favButton)
+        val backBtn = findViewById<Button>(R.id.backButton)
+
+        // доступ к редактированию описания
+        if (!Session.isAdmin) {
+            editBtn.visibility = View.GONE
+            descText.isEnabled = false
+        } else {
+            descText.isEnabled = true
+        }
+
+        // получаем id юзера из БД по имени из сессии
+        val userName = Session.currentUserName
+        if (userName.isNullOrBlank()) {
+            Toast.makeText(this, "Сессия не найдена. Войдите заново.", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
-        userRepo.getByName(currentName)?.let { userId = it.id }
-
-        carId = intent.getLongExtra("car_id", -1)
-
-        val nameText  = findViewById<TextView>(R.id.carName)
-        val priceText = findViewById<TextView>(R.id.carPrice)
-        val descText  = findViewById<TextView>(R.id.carDescription)
-        val yearText  = findViewById<TextView>(R.id.carYear)
-        val bodyText  = findViewById<TextView>(R.id.carBodyType)
-
-        val editBtn   = findViewById<Button>(R.id.editDescButton)
-        val favBtn    = findViewById<Button>(R.id.favButton)
-        val addBtn    = findViewById<Button>(R.id.addDeskButton)
-
-        if (!Session.isAdmin) {
-            editBtn.visibility = View.GONE
-            addBtn.visibility = View.GONE
-        }
-
-        val backToMain = findViewById<Button>(R.id.backToMainButton)
-        backToMain.setOnClickListener {
+        val user = userRepo.getByName(userName)
+        if (user == null) {
+            Toast.makeText(this, "Пользователь не найден в БД", Toast.LENGTH_SHORT).show()
             finish()
+            return
         }
+        currentUserId = user.id
 
-        // загрузка данных и статуса избранного
         io.execute {
             val car = carRepo.getById(carId)
-            val fav = carRepo.isFavorite(userId, carId)
+            val fav = carRepo.isFavorite(currentUserId, carId)
             runOnUiThread {
+                isFavNow = fav
+                favBtn.text = if (isFavNow) "Убрать из избранного" else "В избранное"
+
                 car?.let {
-                    nameText.text  = "${it.brand} ${it.model}"
+                    nameText.text = "${it.brand} ${it.model}"
                     priceText.text = NumberFormat.getCurrencyInstance(Locale.US).format(it.price)
-                    descText.text  = it.description ?: "Описание машины"
-                    yearText.text  = "Год выпуска: ${it.year}"
-                    bodyText.text  = "Тип кузова: ${it.body ?: "—"}"
+                    descText.setText(it.description ?: "описание машины")
+                    yearText.text = "Год выпуска: ${it.year}"
+                    bodyText.text = "Тип кузова: ${it.body ?: "—"}"
+
+                    val url = it.imageUrl
+                    if (!url.isNullOrBlank()) {
+                        Glide.with(this)
+                            .load(url)
+                            .placeholder(android.R.drawable.ic_menu_camera)
+                            .error(android.R.drawable.ic_menu_report_image)
+                            .centerCrop()
+                            .into(carImage)
+                    } else {
+                        carImage.setImageResource(android.R.drawable.ic_menu_camera)
+                    }
                 }
-                favBtn.text = if (fav) "Убрать из избранного" else "В избранное"
             }
         }
 
+        // редактирование описания (только админ)
         editBtn.setOnClickListener {
-            val input = EditText(this)
-            input.setText(descText.text)
-            AlertDialog.Builder(this)
-                .setTitle("Изменить описание")
-                .setView(input)
-                .setPositiveButton("Сохранить") { _, _ ->
-                    val newText = input.text.toString()
-                    descText.text = newText
-                    io.execute { carRepo.updateDescription(carId, newText) }
-                    Toast.makeText(this, "Описание сохранено", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("Отмена", null)
-                .show()
+            if (!Session.isAdmin) {
+                Toast.makeText(this, "Только админ может менять описание", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val newText = descText.text.toString()
+            io.execute {
+                carRepo.updateDescription(carId, newText)
+                runOnUiThread { Toast.makeText(this, "Описание обновлено", Toast.LENGTH_SHORT).show() }
+            }
         }
 
         favBtn.setOnClickListener {
             io.execute {
-                val nowFav = carRepo.isFavorite(userId, carId)
-                if (nowFav) carRepo.removeFavorite(userId, carId) else carRepo.addFavorite(userId, carId)
+                if (carRepo.isFavorite(currentUserId, carId)) {
+                    carRepo.removeFavorite(currentUserId, carId)
+                    isFavNow = false
+                } else {
+                    carRepo.addFavorite(currentUserId, carId)
+                    isFavNow = true
+                }
                 runOnUiThread {
-                    favBtn.text = if (nowFav) "В избранное" else "Убрать из избранного"
-                    Toast.makeText(this, if (nowFav) "Убрано из избранного" else "Добавлено в избранное", Toast.LENGTH_SHORT).show()
+                    favBtn.text = if (isFavNow) "Убрать из избранного" else "В избранное"
+                    Toast.makeText(
+                        this,
+                        if (isFavNow) "Добавлено в избранное" else "Удалено из избранного",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
 
-        addBtn.setOnClickListener {
-            val input = EditText(this)
-            AlertDialog.Builder(this)
-                .setTitle("Добавить описание")
-                .setView(input)
-                .setPositiveButton("Сохранить") { _, _ ->
-                    val newText = input.text.toString()
-                    descText.text = newText
-                    io.execute { carRepo.updateDescription(carId, newText) }
-                    Toast.makeText(this, "Описание добавлено", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("Отмена", null)
-                .show()
-        }
-
-
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                Toast.makeText(this, "Назад", Toast.LENGTH_SHORT).show()
-                finish()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+        backBtn.setOnClickListener { finish() }
     }
 }

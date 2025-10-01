@@ -24,7 +24,6 @@ class LoginActivity : AppCompatActivity() {
 
         val userRepo = UserRepository(this)
 
-        // переключатель вход/регистрация
         switchMode.setOnClickListener {
             isRegisterMode = !isRegisterMode
             if (isRegisterMode) {
@@ -49,7 +48,6 @@ class LoginActivity : AppCompatActivity() {
             }
 
             if (isRegisterMode) {
-                // регистрация
                 io.execute {
                     if (userRepo.getByName(name) != null) {
                         runOnUiThread {
@@ -68,7 +66,6 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                // вход
                 io.execute {
                     val user = userRepo.checkLogin(name, pass)
                     if (user == null) {
