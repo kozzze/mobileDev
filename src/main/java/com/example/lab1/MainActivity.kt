@@ -17,6 +17,9 @@ import com.example.lab1.db.CarRepository
 import com.example.lab1.db.UserRepository
 import com.example.lab1.model.Car
 import java.util.concurrent.Executors
+import com.example.lab1.db.OwnerRepository
+import com.example.lab1.model.Owner
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -137,21 +140,38 @@ class MainActivity : AppCompatActivity() {
             hint = "Цена"
             inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         }
-        val imageUrlEt = EditText(this).apply { hint = "URL картинки (https://...)" }
+        val imageUrlEt = EditText(this).apply { hint = "URL картинки" }
+
+        // 🆕 Поля для владельца
+        val firstNameEt = EditText(this).apply { hint = "Имя владельца" }
+        val lastNameEt  = EditText(this).apply { hint = "Фамилия владельца" }
+        val phoneEt     = EditText(this).apply {
+            hint = "Телефон владельца"
+            inputType = InputType.TYPE_CLASS_PHONE
+        }
+        val tgEt        = EditText(this).apply { hint = "Telegram (необязательно)" }
+        val emailEt     = EditText(this).apply { hint = "Email (необязательно)" }
 
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 16, 32, 0)
+            // Машина
             addView(brandEt)
             addView(modelEt)
             addView(yearEt)
             addView(bodyEt)
             addView(priceEt)
             addView(imageUrlEt)
+            // Владелец
+            addView(firstNameEt)
+            addView(lastNameEt)
+            addView(phoneEt)
+            addView(tgEt)
+            addView(emailEt)
         }
 
         AlertDialog.Builder(this)
-            .setTitle("Добавить машину")
+            .setTitle("Добавить машину и владельца")
             .setView(layout)
             .setPositiveButton("Сохранить") { _, _ ->
                 val brand = brandEt.text.toString().trim()
@@ -161,13 +181,20 @@ class MainActivity : AppCompatActivity() {
                 val price = priceEt.text.toString().toDoubleOrNull()
                 val img   = imageUrlEt.text.toString().trim().ifBlank { null }
 
-                if (brand.isEmpty() || model.isEmpty() || year == null || price == null) {
-                    Toast.makeText(this, "Заполните бренд, модель, год и цену", Toast.LENGTH_SHORT).show()
+                val fName = firstNameEt.text.toString().trim()
+                val lName = lastNameEt.text.toString().trim()
+                val phone = phoneEt.text.toString().trim()
+                val tg    = tgEt.text.toString().trim().ifBlank { null }
+                val email = emailEt.text.toString().trim().ifBlank { null }
+
+                if (brand.isEmpty() || model.isEmpty() || year == null || price == null ||
+                    fName.isEmpty() || lName.isEmpty() || phone.isEmpty()) {
+                    Toast.makeText(this, "Заполните все обязательные поля", Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
                 io.execute {
-                    carRepo.insert(
+                    val carId = carRepo.insert(
                         Car(
                             brand = brand,
                             model = model,
@@ -177,6 +204,22 @@ class MainActivity : AppCompatActivity() {
                             imageUrl = img
                         )
                     )
+
+                    // 🆕 Добавляем владельца
+                    if (carId > 0) {
+                        val ownerRepo = OwnerRepository(this)
+                        ownerRepo.insert(
+                            Owner(
+                                carId = carId,
+                                firstName = fName,
+                                lastName = lName,
+                                phone = phone,
+                                telegram = tg,
+                                email = email
+                            )
+                        )
+                    }
+
                     val cars = carRepo.getAll()
                     runOnUiThread {
                         adapter = CarAdapter(cars) { car ->
@@ -185,11 +228,13 @@ class MainActivity : AppCompatActivity() {
                             startActivity(i)
                         }
                         rv.adapter = adapter
-                        Toast.makeText(this, "Машина добавлена", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Машина + владелец добавлены", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             .setNegativeButton("Отмена", null)
             .show()
     }
+
+
 }

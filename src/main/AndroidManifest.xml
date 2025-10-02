@@ -18,5 +18,6 @@
 
         <activity android:name=".MainActivity" android:exported="false" />
         <activity android:name=".CarDetailActivity" android:exported="false" />
+        <activity android:name=".OwnerDetailActivity" android:exported="false" android:label="Владелец"/>
     </application>
 </manifest>

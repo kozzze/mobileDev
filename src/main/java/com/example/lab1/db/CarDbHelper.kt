@@ -6,9 +6,12 @@ import android.database.sqlite.SQLiteOpenHelper
 import com.example.lab1.db.CarContract as C
 import com.example.lab1.db.UserContract as U
 import com.example.lab1.db.FavoriteContract as F
+import com.example.lab1.db.CarContract
+import com.example.lab1.db.OwnerContract
+
 
 private const val DB_NAME = "cars.db"
-private const val DB_VERSION = 8
+private const val DB_VERSION = 9
 
 class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
 
@@ -57,7 +60,22 @@ class CarDbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, D
             );
         """.trimIndent())
 
-        }
+        // --- owners ---
+        db.execSQL("""
+    CREATE TABLE ${OwnerContract.TABLE} (
+        ${OwnerContract.Col.ID} INTEGER PRIMARY KEY AUTOINCREMENT,
+        ${OwnerContract.Col.CAR_ID} INTEGER NOT NULL,
+        ${OwnerContract.Col.FIRST_NAME} TEXT NOT NULL,
+        ${OwnerContract.Col.LAST_NAME} TEXT NOT NULL,
+        ${OwnerContract.Col.PHONE} TEXT NOT NULL,
+        ${OwnerContract.Col.TELEGRAM} TEXT,
+        ${OwnerContract.Col.EMAIL} TEXT,
+        FOREIGN KEY (${OwnerContract.Col.CAR_ID}) REFERENCES ${CarContract.TABLE}(${CarContract.Col.ID}) ON DELETE CASCADE
+    );
+""".trimIndent())
+
+
+    }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS ${F.TABLE}")

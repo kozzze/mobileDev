@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/ownerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ФИО владельца"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/ownerPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Телефон: "/>
+
+    <TextView
+        android:id="@+id/ownerTelegram"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Telegram: "/>
+
+
+    <TextView
+        android:id="@+id/ownerEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email: "/>
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="200dp"
+        android:padding="12dp"
+        android:text="Назад"
+        android:layout_marginTop="24dp"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

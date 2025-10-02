@@ -43,6 +43,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <Button
+        android:id="@+id/contactButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:minWidth="200dp"
+        android:padding="12dp"
+        android:text="Связаться"
+        app:cornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backButton"
+        app:layout_constraintVertical_bias="0.019" />
 
     <EditText
         android:id="@+id/carDescription"
@@ -124,7 +138,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
         android:layout_marginEnd="288dp"
-        android:text="Назад"
+        android:text="@string/back"
         app:cornerRadius="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/specsCard" />

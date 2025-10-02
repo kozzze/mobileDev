@@ -1,4 +1,5 @@
 package com.example.lab1
+import android.content.Intent
 
 import android.os.Bundle
 import android.view.View
@@ -124,6 +125,13 @@ class CarDetailActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+        }
+        val contactBtn = findViewById<Button>(R.id.contactButton)
+
+        contactBtn.setOnClickListener {
+            val i = Intent(this, OwnerDetailActivity::class.java)
+            i.putExtra("car_id", carId)
+            startActivity(i)
         }
 
         backBtn.setOnClickListener { finish() }
