@@ -21,4 +21,29 @@
     <string name="lifecycle_detail_destroy">CarDetailActivity: onDestroy</string>
     <string name="lifecycle_detail_restart">CarDetailActivity: onRestart</string>
     <string name="title_activity_main2">MainActivity2</string>
+    <string name="price">25.000</string>
+    <string name="user">Пользователь</string>
+    <string name="pwd">Пароль</string>
+    <string name="IAdmin">Я админ</string>
+    <string name="login">Войти</string>
+    <string name="mbregister">Нет аккаунта? Регистрация</string>
+    <string name="logName">Логин</string>
+    <string name="defCar">Tayota Camry</string>
+    <string name="exit">Выйти</string>
+    <string name="favorite">Избранное</string>
+    <string name="addCar">Добавить машину</string>
+    <string name="call">Связаться</string>
+    <string name="carDesk">Описание машины</string>
+    <string name="defYearCar">Год выпуска: 2023</string>
+    <string name="defTypeCar"> Тип кузова: Седан</string>
+    <string name="changeDesk"> Изменить описание</string>
+    <string name="toFavorite"> В избранное</string>
+    <string name="fio"> ФИО владельца: </string>
+    <string name="telegram"> Telegram: </string>
+    <string name="phone"> Телефон: </string>
+    <string name="email"> Email: </string>
+
+
+
+
 </resources>

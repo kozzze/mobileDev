@@ -70,7 +70,7 @@ class CarDetailActivity : AppCompatActivity() {
             val fav = carRepo.isFavorite(currentUserId, carId)
             runOnUiThread {
                 isFavNow = fav
-                favBtn.text = if (isFavNow) "Убрать из избранного" else "В избранное"
+                favBtn.text = if (isFavNow) "Из избранного" else "В избранное"
 
                 car?.let {
                     nameText.text = "${it.brand} ${it.model}"
@@ -117,7 +117,7 @@ class CarDetailActivity : AppCompatActivity() {
                     isFavNow = true
                 }
                 runOnUiThread {
-                    favBtn.text = if (isFavNow) "Убрать из избранного" else "В избранное"
+                    favBtn.text = if (isFavNow) "Из избранного" else "В избранное"
                     Toast.makeText(
                         this,
                         if (isFavNow) "Добавлено в избранное" else "Удалено из избранного",

@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="12dp"
-        android:background="#EEEEEE"
+        android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -20,17 +20,17 @@
             android:id="@+id/userNameText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Пользователь"
+            android:text="@string/user"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            android:textColor="@color/black"
             android:layout_weight="1"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/logoutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Выйти"
+            android:text="@string/exit"
             app:cornerRadius="16dp"/>
     </LinearLayout>
 
@@ -48,7 +48,7 @@
             android:id="@+id/favoritesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Избранное"
+            android:text="@string/favorite"
             android:layout_marginEnd="8dp"
             app:cornerRadius="16dp"/>
 
@@ -56,7 +56,7 @@
             android:id="@+id/addCarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Добавить авто"
+            android:text="@string/addCar"
             android:visibility="gone"
             app:cornerRadius="16dp"/>
     </LinearLayout>
