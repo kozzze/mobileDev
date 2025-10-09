@@ -42,6 +42,20 @@
     <string name="telegram"> Telegram: </string>
     <string name="phone"> Телефон: </string>
     <string name="email"> Email: </string>
+    <string name="no_description">Описание отсутствует</string>
+    <string name="car_year">Год выпуска: %1$d</string>
+    <string name="car_body">Тип кузова: %1$s</string>
+    <string name="edit_only_admin">Только админ может менять описание</string>
+    <string name="desc_updated">Описание обновлено</string>
+    <string name="desc_not_changed">Описание не изменилось</string>
+    <string name="desc_hint">Введите новое описание</string>
+    <string name="desc_edit_title">Изменить описание</string>
+    <string name="add_to_favorites">В избранное</string>
+    <string name="remove_from_favorites">Из избранного</string>
+    <string name="added_to_favorites">Добавлено в избранное</string>
+    <string name="removed_from_favorites">Удалено из избранного</string>
+    <string name="auth_error">Ошибка авторизации</string>
+
 
 
 
