@@ -56,5 +56,7 @@
     <string name="added_to_favorites">Added to favorites</string>
     <string name="removed_from_favorites">Removed favorites</string>
     <string name="auth_error">Authorization error</string>
+    <string name="call_owner">Call</string>
+
 
 </resources>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Car Catalog</string>
+    <string name="app_name">GorillaCars</string>
     <string name="back">Назад</string>
     <string name="add_description">Добавить описание</string>
     <string name="item_details">Car Details</string>
@@ -55,6 +55,7 @@
     <string name="added_to_favorites">Добавлено в избранное</string>
     <string name="removed_from_favorites">Удалено из избранного</string>
     <string name="auth_error">Ошибка авторизации</string>
+    <string name="call_owner">Позвонить</string>
 
 
 

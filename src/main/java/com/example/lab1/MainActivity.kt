@@ -19,6 +19,7 @@ import com.example.lab1.model.Car
 import java.util.concurrent.Executors
 import com.example.lab1.db.OwnerRepository
 import com.example.lab1.model.Owner
+import com.example.lab1.adapter.FavoriteCarAdapter
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +29,8 @@ class MainActivity : AppCompatActivity() {
     private val io = Executors.newSingleThreadExecutor()
 
     private lateinit var rv: RecyclerView
-    private var adapter: CarAdapter? = null
+    private var adapter: RecyclerView.Adapter<*>? = null
+
 
     private lateinit var userNameText: TextView
     private lateinit var logoutButton: Button
@@ -45,7 +47,6 @@ class MainActivity : AppCompatActivity() {
         carRepo = CarRepository(this)
         userRepo = UserRepository(this)
 
-        // проверяем сессию
         val name = AuthManager.getUserName(this)
         if (name == null) {
             startActivity(Intent(this, LoginActivity::class.java))
@@ -72,7 +73,6 @@ class MainActivity : AppCompatActivity() {
 
         loadAllCars()
 
-        // Выйти
         logoutButton.setOnClickListener {
             AuthManager.clearUser(this)
             Session.currentUserName = null
@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        // Избранное
         favoritesButton.setOnClickListener {
             if (showingFavorites) {
                 loadAllCars()
@@ -95,7 +94,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Добавить авто (только админ)
         addCarButton.setOnClickListener { showAddCarDialog() }
     }
 
@@ -117,11 +115,12 @@ class MainActivity : AppCompatActivity() {
         io.execute {
             val favCars = carRepo.getFavorites(currentUserId)
             runOnUiThread {
-                adapter = CarAdapter(favCars) { car ->
+                adapter = FavoriteCarAdapter(favCars) { car ->
                     val i = Intent(this, CarDetailActivity::class.java)
                     i.putExtra("car_id", car.id)
                     startActivity(i)
                 }
+
                 rv.adapter = adapter
                 Toast.makeText(this, "Показаны избранные машины", Toast.LENGTH_SHORT).show()
             }
@@ -142,7 +141,6 @@ class MainActivity : AppCompatActivity() {
         }
         val imageUrlEt = EditText(this).apply { hint = "URL картинки" }
 
-        // 🆕 Поля для владельца
         val firstNameEt = EditText(this).apply { hint = "Имя владельца" }
         val lastNameEt  = EditText(this).apply { hint = "Фамилия владельца" }
         val phoneEt     = EditText(this).apply {
@@ -155,14 +153,12 @@ class MainActivity : AppCompatActivity() {
         val layout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(32, 16, 32, 0)
-            // Машина
             addView(brandEt)
             addView(modelEt)
             addView(yearEt)
             addView(bodyEt)
             addView(priceEt)
             addView(imageUrlEt)
-            // Владелец
             addView(firstNameEt)
             addView(lastNameEt)
             addView(phoneEt)
@@ -205,7 +201,6 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
 
-                    // 🆕 Добавляем владельца
                     if (carId > 0) {
                         val ownerRepo = OwnerRepository(this)
                         ownerRepo.insert(

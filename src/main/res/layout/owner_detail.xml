@@ -17,6 +17,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/phone"/>
+    <Button
+        android:id="@+id/btnCall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/call_owner"
+        android:layout_marginTop="8dp"/>
+
 
     <TextView
         android:id="@+id/ownerTelegram"

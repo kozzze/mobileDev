@@ -6,6 +6,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.lab1.db.OwnerRepository
+import android.content.Intent
+import android.net.Uri
+
 
 class OwnerDetailActivity : AppCompatActivity() {
     private lateinit var repo: OwnerRepository
@@ -36,6 +39,18 @@ class OwnerDetailActivity : AppCompatActivity() {
             emailView.text = "-"
             Toast.makeText(this, "Владелец для этой машины отсутствует", Toast.LENGTH_SHORT).show()
         }
+        val btnCall = findViewById<Button>(R.id.btnCall)
+
+        btnCall.setOnClickListener {
+            val phoneNumber = phoneView.text.toString()
+            if (phoneNumber.isNotEmpty()) {
+                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
+                startActivity(intent)
+            } else {
+                Toast.makeText(this, "Номер телефона отсутствует", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         backBtn.setOnClickListener {
             finish()

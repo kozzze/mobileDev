@@ -3,7 +3,7 @@
 
     <application
         android:allowBackup="true"
-        android:label="Lab1"
+        android:label="GorillaCars"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
